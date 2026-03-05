@@ -1,6 +1,6 @@
 # Context Hub
 
-AI agents hallucinate APIs and forget what they learn in a session. Context Hub gives them curated, versioned docs — and the ability to get smarter with every task. All content is open and maintained as markdown in this repo — you can inspect exactly what your agent reads, and contribute back.
+Coding agents hallucinate APIs and forget what they learn in a session. Context Hub gives them curated, versioned docs, plus the ability to get smarter with every task. All content is open and maintained as markdown in this repo — you can inspect exactly what your agent reads, and contribute back. 
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![npm](https://img.shields.io/npm/v/@aisuite/chub)](https://www.npmjs.com/package/@aisuite/chub)
@@ -10,17 +10,19 @@ AI agents hallucinate APIs and forget what they learn in a session. Context Hub 
 
 ```bash
 npm install -g @aisuite/chub
-chub search "stripe"                 # find what's available
-chub get stripe/api                  # fetch current docs
+chub search openai                 # find what's available
+chub get openai/chat --lang py     # fetch current docs (Python version) 
 ```
 
 ## How It Works
+
+Chub is designed for your coding agent to use (not for you to use!). You can prompt your agent to use it (e.g., "Use the CLI command chub to get the latest API documentation for calling OpenAI. Run 'chub help' to understand how it works.") Or by creating an agent skill to use Chub using [SKILL.md](cli/skills/get-api-docs/SKILL.md), and ideally prompting your agent to remember to use this skill. (If you are using Claude Code, create the directory ~/.claude/skills/get-api-docs and put SKILL.md there.) 
 
 **Most of the time, it's simple — search, fetch, use:**
 
 ```bash
 chub search "stripe payments"        # find relevant docs
-chub get stripe/api                  # fetch the doc
+chub get stripe/api --lang js        # fetch the doc
 # Agent reads the doc, writes correct code. Done.
 ```
 
@@ -29,33 +31,32 @@ chub get stripe/api                  # fetch the doc
 ```bash
 chub annotate stripe/api "Needs raw body for webhook verification"
 
-# Next session, the annotation appears automatically on fetch.
+# Next session, the annotation appears automatically on chub get.
 ```
 
-**Feedback flows back to authors** — `chub feedback stripe/api up` or `down` — so the docs get better for everyone over time.
+**Feedback flows back to authors** — `chub feedback stripe/api up` or `down` — vote the docs up or down so they can get better for everyone over time.
 
 ## Content Types
 
-**Docs** — API and SDK references. Versioned, language-specific. "What to know."
+Versioned, language-specific. "What to know."
+
 ```bash
-chub get openai/chat-api --lang py   # Python variant
-chub get stripe/api --lang js        # JavaScript variant
+chub get openai/chat --lang py       # Python variant
+chub get openai/chat --lang js       # JavaScript variant
 ```
 
-**Skills** — Task recipes and coding playbooks. A growing area — [contribute yours](docs/content-guide.md).
-
-All content is markdown with YAML frontmatter, following the [Agent Skills](https://agentskills.io) open standard — compatible with Claude Code, Cursor, Codex, and other AI tools.
+More content types than API documentation (such as agent skills) are on the roadmap. 
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
 | `chub search [query]` | Search docs and skills (no query = list all) |
-| `chub get <ids...>` | Fetch docs or skills by ID |
+| `chub get <id> [--lang py|js]` | Fetch docs or skills by ID |
 | `chub annotate <id> <note>` | Attach a note to a doc or skill |
-| `chub annotate <id> --clear` | Remove an annotation |
+| `chub annotate <id> --clear` | Remove annotations |
 | `chub annotate --list` | List all annotations |
-| `chub feedback <id> <up\|down>` | Rate a doc or skill (sent to maintainers) |
+| `chub feedback <id> <up\|down>` | Upvote or downvote a doc (sent to maintainers) |
 
 For the full list of commands, flags, and piping patterns, see the [CLI Reference](docs/cli-reference.md).
 
@@ -83,10 +84,6 @@ Context Hub is designed for a loop where agents get better over time.
 ### Incremental Fetch
 
 Docs can have multiple reference files beyond the main entry point. Fetch only what you need — no wasted tokens. Use `--file` to grab specific references, or `--full` for everything. See the [CLI Reference](docs/cli-reference.md).
-
-### Private Content Repo — *Coming Soon*
-
-Teams need their own internal docs alongside the public registry: deployment playbooks, coding conventions, internal API references. See [Private Content Repo](docs/private-content.md).
 
 ### Annotations & Feedback
 
